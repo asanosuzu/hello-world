@@ -111,6 +111,19 @@ def strengtheningThick(x_coordinate,b_fiber,tP,nR,Rs):
     return new_thick_list,r0,alpha
 
 
+# def solveRK4(u,y,z,R,shortS):
+    # r = R * (shortS**2 - (z-shortS)**2 )**0.5/shortS
+    # r1 = -R *(z-shortS)/(shortS*(shortS**2-(z-shortS)**2)**0.5)
+    # r11 = -R*/(shortS**2-(z-shortS)**2)**(3.0/2)
+    
+    # y1=(u*((1+r1**2)*sin(y[0])**2-r*r11*cos(y[0])**2)-(1+ \
+        # r1**2)*r1*sin(y[0]))/(r*(1+r1**2)*cos(y[0]))
+    # y2=tan(y[0])*(1+r1**2)**0.5/r
+    
+    # return [y1,y2]
+    
+
+#def nonGeodesic():
 
 
 def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
@@ -167,7 +180,7 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
     
         
 
-    xiedegree=slopeDegree #环向层斜度<
+    xiedegree=slopeDegree #环向层斜度
     todegree=pi/180.0
 
     huanxiang_alpha=90.0 #hoopAlpha #环向角度
@@ -200,7 +213,7 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
     m.HomogeneousSolidSection(name='Section-composite', material=compositeName, thickness=None)
     #m.HomogeneousSolidSection(name='Section-liner', material=linerName, thickness=None)
 
-	
+
 
 
     curspline=[]
@@ -435,14 +448,97 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
                 count=count+1
                 pickcells=c.findAt(((k[0], k[1], k[2]),))
                 winding_angle=arcsin(r0/k[0])*180.0/pi
+                #print "r0=%s,k[0]=%s\n"%(r0,k[0])
                 list_angle.append(winding_angle)
                 p1.Set(name='L_set-'+str(L_lxcount)+'-'+str(count),cells=pickcells)
             
             all_angle.append(list_angle)
             all_count.append(count)  
           
- 
+            #赋予角度
+            # for k in range(1,count):
+                # layupOrientation = None
+                # region1 = p1.sets['L_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['L_surfHeadTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='L_compositeLayupHead'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
+    #        筒身段赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['L_set-'+str(lxcount)+'-'+str(count)]
+            # normalAxisRegion = p1.surfaces['L_surfCylinderTop'+str(lxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='L_compositeLayupCylinder', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)  
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+            
+            ##画网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
+             
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
+
             SDcoordinates=(newRo*cos(0.5*rotangle*todegree),y2/2.0,-newRo*sin(0.5*rotangle*todegree))
+            # fcoordinate=side1Faces22.pointsOn[0][0]
+            # c = p1.cells
+            # f = p1.faces
+            # p1.assignStackDirection(referenceRegion=f.findAt(coordinates=(newRo*cos(0.5*rotangle*todegree),y2/2.0,-newRo*sin(0.5*rotangle*todegree))), cells=c)     
 
         elif windtype == 'helixReaming':
             kfengtoui=cankaolunkuo#内轮廓等于参考轮廓
@@ -614,6 +710,84 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             p1.PartitionCellBySweepEdge(sweepPath=e.findAt(coordinates=(fengtouo[-1][0]*cos(0.5*rotangle*todegree), 
                 L, -1*fengtouo[-1][0]*sin(0.5*rotangle*todegree))), cells=pickedCells, edges=pickedEdges)            
            
+    ##待注释
+            # for k in range(1,count):
+                # layupOrientation = None
+                # region1 = p1.sets['L_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['L_surfHeadTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='L_compositeLayupHead-'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
+           ##筒身段赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['L_set-'+str(lxcount)+'-'+str(count)]
+            # normalAxisRegion = p1.surfaces['L_surfCylinderTop'+str(lxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='L_compositeLayupCylinder', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)  
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+
+            ##画网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
+             
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
             
             SDcoordinates=(newRo*cos(0.5*rotangle*todegree),y2/2.0,-newRo*sin(0.5*rotangle*todegree))
             # fcoordinate=side1Faces22.pointsOn[0][0]
@@ -862,7 +1036,36 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
 
 
             
- 
+            
+    ##待注释
+            # for k in range(1,count+1):
+                # layupOrientation = None
+                # region1 = p1.sets['L_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['L_surfStrengtheningTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='L_compositeLayupStrengthening-'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k-1], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k-1], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
 
         
 
@@ -910,6 +1113,56 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             for k in face_coordinate:
                 pickcells=c.findAt(((k[0], k[1], k[2]),))
                 p1.Set(name='L_set-'+str(L_hxcount),cells=pickcells)
+
+            ##环向层赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['Set-'+str(hxcount)]
+            # normalAxisRegion = p1.surfaces['L_surfHoopTop'+str(hxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='L_compositeLayupHoop', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=huanxiang_alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*huanxiang_alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)            
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+
+            ##控制网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
+             
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
 
             SDcoordinates=(tnewRo*cos(0.5*rotangle*todegree),y2/2.0,-tnewRo*sin(0.5*rotangle*todegree))
             # c = p1.cells
@@ -1173,6 +1426,84 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             
             r_all_angle.append(list_angle)
             r_all_count.append(count)    
+            #赋予角度
+            # for k in range(1,count):
+                # layupOrientation = None
+                # region1 = p1.sets['R_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['R_surfHeadTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='R_compositeLayupHead-'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
+           ##筒身段赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['R_set-'+str(lxcount)+'-'+str(count)]
+            # normalAxisRegion = p1.surfaces['R_surfCylinderTop'+str(lxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='R_compositeLayupCylinder', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)  
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+            
+            ##画网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
+             
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
 
             SDcoordinates=(newRo*cos(0.5*rotangle*todegree),y2/2.0,-newRo*sin(0.5*rotangle*todegree))
             # fcoordinate=side1Faces22.pointsOn[0][0]
@@ -1346,7 +1677,85 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             pickedEdges =(e.findAt(coordinates=(0.5*(fengtoui[0][0]+fengtouo[0][0]), 0.5*(fengtoui[0][1]+fengtouo[0][1]), 0.0)),) 
             p1.PartitionCellBySweepEdge(sweepPath=e.findAt(coordinates=(fengtouo[-1][0]*cos(0.5*rotangle*todegree), 
                 L, -1*fengtouo[-1][0]*sin(0.5*rotangle*todegree))), cells=pickedCells, edges=pickedEdges)         
+    ##待注释
+            # for k in range(1,count):
+                # layupOrientation = None
+                # region1 = p1.sets['R_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['R_surfHeadTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='R_compositeLayupHead-'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
+           ##筒身段赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['R_set-'+str(lxcount)+'-'+str(count)]
+            # normalAxisRegion = p1.surfaces['R_surfCylinderTop'+str(lxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='R_compositeLayupCylinder', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)  
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+
+            ##画网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
              
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
+            
             SDcoordinates=(newRo*cos(0.5*rotangle*todegree),y2/2.0,-newRo*sin(0.5*rotangle*todegree))
             # fcoordinate=side1Faces22.pointsOn[0][0]
             # c = p1.cells
@@ -1589,6 +1998,36 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             p1.PartitionCellBySweepEdge(sweepPath=e.findAt(coordinates=(fengtouo[1][0]*cos(0.5*rotangle*todegree), fengtouo[1][1], 
                 -1*fengtouo[1][0]*sin(0.5*rotangle*todegree))), cells=c, edges=pickedEdges) 
        
+                
+    ##待注释
+            # for k in range(1,count+1):
+                # layupOrientation = None
+                # region1 = p1.sets['R_set-'+str(lxcount)+'-'+str(k)]
+                # normalAxisRegion = p1.surfaces['R_surfStrengtheningTop'+str(lxcount)+'-'+str(k)]
+                # compositeLayup = p1.CompositeLayup(
+                    # name='R_compositeLayupStrengthening-'+str(k), description='', elementType=SOLID, 
+                    # symmetric=False)
+                # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                    # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                    # useDensity=OFF)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=list_angle[k-1], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                    # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                    # orientationType=SPECIFY_ORIENT, orientationValue=-1*list_angle[k-1], 
+                    # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                    # axis=AXIS_3, angle=0.0, numIntPoints=3)
+                # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                    # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                    # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                    # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                    # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                    # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                    # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False) 
+
 
         
 
@@ -1635,7 +2074,56 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
             for k in face_coordinate:
                 pickcells=c.findAt(((k[0], k[1], k[2]),))
                 p1.Set(name='R_set-'+str(R_hxcount),cells=pickcells)
+
+            #环向层赋予角度
+            # layupOrientation = None
+            # region1 = p1.sets['R_set-'+str(hxcount)]
+            # normalAxisRegion = p1.surfaces['R_surfHoopTop'+str(hxcount)]
+            # compositeLayup = p1.CompositeLayup(
+                # name='R_compositeLayupHoop', description='', elementType=SOLID, 
+                # symmetric=False)
+            # compositeLayup.Section(preIntegrate=OFF, integrationRule=SIMPSON, 
+                # poissonDefinition=DEFAULT, thicknessModulus=None, temperature=GRADIENT, 
+                # useDensity=OFF)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=huanxiang_alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.CompositePly(suppressed=False, plyName='Ply-2', region=region1, 
+                # material='Material-composite', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+                # orientationType=SPECIFY_ORIENT, orientationValue=-1*huanxiang_alpha, 
+                # additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+                # axis=AXIS_3, angle=0.0, numIntPoints=3)
+            # compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+                # additionalRotationType=ROTATION_NONE, angle=0.0, 
+                # additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+                # normalAxisDefinition=SURFACE, normalAxisRegion=normalAxisRegion, 
+                # normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+                # primaryAxisDefinition=VECTOR, primaryAxisVector=(0.0, 1.0, 0.0), 
+                # primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)            
+           #切分斜角方便画网格
+            # pt1=p1.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=y2)
+            # c = p1.cells
+            # d1 = p1.datums
+            # p1.PartitionCellByDatumPlane(datumPlane=d1[pt1.id], cells=c)
+
+            ##控制网格
+            # ii=p1.vertices
+            # e1=p1.edges
+            # for edge in e1:
+                # zu=edge.getVertices()
+                # zu1=ii[zu[0]].pointOn
+                # zu2=ii[zu[1]].pointOn
+                # p1x,p1y,p1z,p2x,p2y,p2z=zu1[0][0],zu1[0][1],zu1[0][2],zu2[0][0],zu2[0][1],zu2[0][2]
+                # distance=((p1x-p2x)**2+(p1y-p2y)**2+(p1z-p2z)**2)**0.2
+                # if zu1[0][1]==zu2[0][1] and zu1[0][2]*zu2[0][2]==0 and zu1[0][2]+zu2[0][2]!=0:
+                    # sd=edge.pointOn
+                    # pickedges=e1.findAt(sd)
+                    # p1.seedEdgeByNumber(edges=pickedges, number=piece_number, constraint=FINER)
              
+            # p1.seedPart(size=approximate_size, deviationFactor=0.1, minSizeFactor=0.1)
+            # p1.generateMesh()
 
             SDcoordinates=(tnewRo*cos(0.5*rotangle*todegree),y2/2.0,-tnewRo*sin(0.5*rotangle*todegree))
             # c = p1.cells
@@ -1649,8 +2137,8 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
 
     a1 = m.rootAssembly
     if len(all_instances)> 1:
-        a1.InstanceFromBooleanMerge(name='Part-F', instances=all_instances, keepIntersections=ON, originalInstances=DELETE, domain=GEOMETRY)
-        p2 = m.parts['Part-F']
+        a1.InstanceFromBooleanMerge(name='Part-2', instances=all_instances, keepIntersections=ON, originalInstances=DELETE, domain=GEOMETRY)
+        p2 = m.parts['Part-2']
     else:
         msg = "set two layers at least" 
         raise AbaqusException, msg
@@ -2138,6 +2626,15 @@ def mian(L_style,slopeDegree,segmentationNum,rotationAngle,fibersWidth,
 
 
     field_count=1
+    # for i in p2.compositeLayups.keys():
+        # field_count=field_count+1
+        # m.FieldOutputRequest(name='F-Output-'+str(field_count), 
+        # createStepName='Step-1', variables=('S', 'E', ), layupNames=(
+        # 'Part-2-1.'+str(i), ), layupLocationMethod=SPECIFIED, 
+        # outputAtPlyTop=False, outputAtPlyMid=True, outputAtPlyBottom=False, 
+        # rebar=EXCLUDE)
+        
+        
 
 
 
